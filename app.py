@@ -19,7 +19,11 @@ start_time = perf_counter()
 logger.info(f"Mode set to: {run_mode}")
 
 # Get image and video lists
-input_media = [p for p in Path(input_folder).iterdir() if p.suffix.lower() in media_extensions]
+try:
+    input_media = [p for p in Path(input_folder).iterdir() if p.suffix.lower() in media_extensions]
+except PermissionError:
+    logger.error("Check input folder permissions")
+    sys.exit(1)
 
 media_count = len(input_media)
 
@@ -80,10 +84,14 @@ for item in media_list:
     target_file_path = destination_dir / source_file.name
 
     if run_mode.lower() == "live":
-        logger.info(f"Moving: {source_file}")
-        destination_dir.mkdir(parents=True, exist_ok=True)
-        shutil.move(src=str(source_file), dst=str(target_file_path))
-        logger.info(f"Successfully moved {source_file} > {target_file_path}")
+        try:
+            logger.info(f"Moving: {source_file}")
+            destination_dir.mkdir(parents=True, exist_ok=True)
+            shutil.move(src=str(source_file), dst=str(target_file_path))
+            logger.info(f"Successfully moved {source_file} > {target_file_path}")
+        except PermissionError:
+            logger.error("Check output folder permissions")
+            sys.exit(1)
 
     else:
         logger.info(f"Would have moved {source_file} > {target_file_path}")
