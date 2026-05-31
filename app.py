@@ -1,7 +1,10 @@
-import exiftool, shutil
+import exiftool, shutil, logging, sys
 from pathlib import Path
 from os import getenv
 from time import perf_counter
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 media_extensions = ('.jpg', '.jpeg', '.heic', '.png', '.gif', '.mov', '.mp4', '.avi')
 media_list = []
@@ -13,14 +16,14 @@ output_folder = getenv('OUTPUT_FOLDER', 'output/')
 run_mode = getenv('MODE', 'dry-run')
 
 start_time = perf_counter()
-print(f"Mode set to: {run_mode}")
+logger.info(f"Mode set to: {run_mode}")
 
 # Get image and video lists
 input_media = [p for p in Path(input_folder).iterdir() if p.suffix.lower() in media_extensions]
 
 media_count = len(input_media)
 
-print(f"Media files to be processed - {media_count}\n")
+logger.info(f"Media files to be processed - {media_count}")
 
 try:
     with exiftool.ExifToolHelper() as et:
@@ -56,10 +59,10 @@ try:
                 media_list.append({"source": source_file, "description": description, "model": model, "created": created})
 
             else:
-                print("Unknown media type... Skipping file")
+                logger.warning(f"Unknown media type... Skipping file: {source_file}")
 
 except ValueError:
-    print("There were no files to process. Nothing to see here....")
+    logger.warning("There were no files to process. Nothing to see here....")
 
 # Move the media files
 for item in media_list:
@@ -77,18 +80,17 @@ for item in media_list:
     target_file_path = destination_dir / source_file.name
 
     if run_mode.lower() == "live":
-        print(f"Moving: {source_file}")
+        logger.info(f"Moving: {source_file}")
         destination_dir.mkdir(parents=True, exist_ok=True)
         shutil.move(src=str(source_file), dst=str(target_file_path))
-        print(f"Successfully moved to: {target_file_path}")
+        logger.info(f"Successfully moved {source_file} > {target_file_path}")
 
     else:
-        print(f"Input file path: {source_file}")
-        print(f"Destination file path: {target_file_path}\n")
+        logger.info(f"Would have moved {source_file} > {target_file_path}")
 
 end_time = perf_counter()
 
 execution_time = end_time - start_time
 
-print(f"Completed processing of {media_count} files in {execution_time:.2f} seconds")
-print(f"The average speed was {media_count/execution_time:.2f} files/sec")
+logger.info(f"Completed processing of {media_count} files in {execution_time:.2f} seconds")
+logger.info(f"The average speed was {media_count/execution_time:.2f} files/sec")
