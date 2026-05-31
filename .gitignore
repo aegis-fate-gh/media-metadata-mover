@@ -1,0 +1,10 @@
+# Environments
+.venv
+venv/
+
+# Media testing folders
+input*/
+output/
+
+# Misc Files
+.DS_Store
