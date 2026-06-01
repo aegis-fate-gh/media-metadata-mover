@@ -1,5 +1,7 @@
 # media-metadata-mover
 
+[Source Code](https://github.com/aegis-fate-gh/media-metadata-mover) on Github
+
 ## Description
 This image contains python code that when given media files, attempts to run them through the embedded [ExifTool](https://exiftool.org). it also makes use of the the [PyExifTool](https://pypi.org/project/PyExifTool/) library. It then looks for exif tags containing creation dates, descriptions, and camera models.
 
