@@ -40,14 +40,14 @@ This image takes 3 environment variables:
 | ----------- | ----------- | ----------- | ----------- |
 | INPUT_FOLDER | input/ | Path | Any valid path |
 | OUTPUT_FOLDER | output/ | Path | Any valid path |
-| DRY_RUN | True | Boolean | True/False |
+| DRY_RUN | True | String | True/False |
 
 - INPUT_FOLDER: The path that the script will look in for media files
 - OUTPUT_FOLDER: The path the script will move the files to
 - DRY_RUN: By default, the script runs in dry-run mode. To actually have the script move the files, this variable must be set to False.
 
 ## Example compose file
-This example mounts a volume named media in /media within the container. It then sets the input and output environment variables to 2 folders within that media volume. Mode is commented out to allow verification that the script will work as intended prior to a live run.
+This example mounts a volume named media in /media within the container. It then sets the input and output environment variables to 2 folders within that media volume. Dry_RUN is commented out to allow verification that the script will work as intended prior to a live run.
 ```
 ---
 version: '3.8'
@@ -63,6 +63,6 @@ services:
       - PGID=1000
       # Only uncomment when you're ready for the script to actually move the files
       # - DRY_RUN=False
-      - INPUT_FOLDER=/media/input
-      - OUTPUT_FOLDER=/media/output
+      - INPUT_FOLDER=/media/input/
+      - OUTPUT_FOLDER=/media/output/
 ```

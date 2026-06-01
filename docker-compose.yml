@@ -12,6 +12,6 @@ services:
       - PUID=1000
       - PGID=1000
       # Only uncomment when you're ready for the script to actually move the files
-      # - DRY_RUN=No
-      - INPUT_FOLDER=/media/PATH_HERE
-      - OUTPUT_FOLDER=/media/PATH_HERE
+      # - DRY_RUN='False'
+      - INPUT_FOLDER=/media/PATH_HERE/
+      - OUTPUT_FOLDER=/media/PATH_HERE/

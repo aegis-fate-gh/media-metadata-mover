@@ -13,23 +13,24 @@ model_list = []
 # ENV variables
 input_folder = getenv('INPUT_FOLDER', 'input/')
 output_folder = getenv('OUTPUT_FOLDER', 'output/')
-run_mode = getenv('DRY_RUN', 'True').lower()
+run_mode = getenv('DRY_RUN', "True").lower()
 
 start_time = perf_counter()
 
 # Get image and video lists
 try:
-    input_media = [p for p in Path(input_folder).iterdir() if p.suffix.lower() in media_extensions]
+    input_media = [p for p in Path(input_folder).rglob("*") if p.suffix.lower() in media_extensions]
 except PermissionError:
     logger.error("Check input folder permissions")
     sys.exit(1)
 
 media_count = len(input_media)
 
-logger.info(f"Dry-Run is set to {run_mode}. No files will be moved!")
-if run_mode == True:
+if run_mode == "false":
+    logger.info(f"Dry-Run is set to {run_mode}")
     logger.info(f"Media files to be processed: {media_count}")
 else:
+    logger.info(f"Dry-Run is set to {run_mode}. No files will be moved!")
     logger.info(f"Media files that would be processed: {media_count}")
 
 try:
@@ -69,7 +70,7 @@ try:
                 logger.warning(f"Unknown media type... Skipping file: {source_file}")
 
 except ValueError:
-    logger.warning("There were no files to process. Nothing to see here....")
+    logger.warning(f"There were no files to process. If files were expected, ensure that input path is correct. It's currently set to: {input_folder}")
 
 # Move the media files
 for item in media_list:
@@ -86,7 +87,7 @@ for item in media_list:
 
     target_file_path = destination_dir / source_file.name
 
-    if run_mode == False:
+    if run_mode == "false":
         try:
             move_start_time = perf_counter()
 
@@ -110,7 +111,7 @@ end_time = perf_counter()
 
 execution_time = end_time - start_time
 
-if run_mode == False:
+if run_mode == "false":
     logger.info(f"Completed processing of {media_count} files in {execution_time:.2f} seconds")
     logger.info(f"The average speed was {media_count/execution_time:.2f} files/sec")
 else:
