@@ -6,7 +6,7 @@ from time import perf_counter
 logging.basicConfig(stream=sys.stdout, format='%(levelname)s:%(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-media_extensions = ('.jpg', '.jpeg', '.heic', '.png', '.gif', '.mov', '.mp4', '.avi')
+media_extensions = ('.jpg', '.jpeg', '.heic', '.heif', '.png', '.gif', '.dng', '.raf', '.cr2', '.cr3', '.nef', '.nrw', '.orf', '.arw', '.tif', '.tiff', '.mov', '.mp4', '.avi')
 media_list = []
 model_list = []
 
@@ -40,6 +40,9 @@ try:
         for media in media_metadata:
             media_type = media.get('File:MIMEType', 'NoType')
             source_file = media.get('SourceFile')
+            
+            # For full extracted metadata output
+            # print(f'{media}\n\n')
 
             # Model tag identification
             if "EXIF:Model" in media:

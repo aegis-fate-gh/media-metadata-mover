@@ -23,15 +23,23 @@ Here's an example process flow on a single image:
 This script is set up to only look for the specific media formats noted below:
 
 **Images:**
-- .jpg / .jpeg
-- .heic
-- .png
+- .arw
+- .cr2 / .cr3
+- .dng
 - .gif
+- .heic / .heif
+- .jpg / .jpeg
+- .nef
+- .nrw
+- .orf
+- .png
+- .raf
+- .tif / .tiff
 
 **Video:**
+- .avi
 - .mov
 - .mp4
-- .avi
 
 Many more formats are supported via ExifTool, but these are the types typically associated with modern cameras.
 
