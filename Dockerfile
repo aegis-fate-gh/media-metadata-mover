@@ -5,7 +5,6 @@ FROM python:3.12-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libimage-exiftool-perl \
-    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 # Prevents Python from writing pyc files.
@@ -21,15 +20,8 @@ WORKDIR /app
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
 ARG UID=1000
 ARG GID=1000
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --home "/nonexistent" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "${UID}" \
-    --gid "${GID}" \
-    appuser
+RUN groupadd -g "${GID}" appuser \
+    && adduser --disabled-password --gecos "" --home "/nonexistent" --shell "/sbin/nologin" --no-create-home --uid "${UID}" --gid "${GID}" appuser
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
