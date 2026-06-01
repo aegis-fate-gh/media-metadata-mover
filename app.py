@@ -3,7 +3,7 @@ from pathlib import Path
 from os import getenv
 from time import perf_counter
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logging.basicConfig(stream=sys.stdout, format='%(levelname)s:%(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 media_extensions = ('.jpg', '.jpeg', '.heic', '.png', '.gif', '.mov', '.mp4', '.avi')
@@ -13,10 +13,9 @@ model_list = []
 # ENV variables
 input_folder = getenv('INPUT_FOLDER', 'input/')
 output_folder = getenv('OUTPUT_FOLDER', 'output/')
-run_mode = getenv('MODE', 'dry-run')
+run_mode = getenv('DRY_RUN', 'True').lower()
 
 start_time = perf_counter()
-logger.info(f"Mode set to: {run_mode}")
 
 # Get image and video lists
 try:
@@ -27,7 +26,11 @@ except PermissionError:
 
 media_count = len(input_media)
 
-logger.info(f"Media files to be processed - {media_count}")
+logger.info(f"Dry-Run is set to {run_mode}. No files will be moved!")
+if run_mode == True:
+    logger.info(f"Media files to be processed: {media_count}")
+else:
+    logger.info(f"Media files that would be processed: {media_count}")
 
 try:
     with exiftool.ExifToolHelper() as et:
@@ -83,22 +86,32 @@ for item in media_list:
 
     target_file_path = destination_dir / source_file.name
 
-    if run_mode.lower() == "live":
+    if run_mode == False:
         try:
+            move_start_time = perf_counter()
+
             logger.info(f"Moving: {source_file}")
             destination_dir.mkdir(parents=True, exist_ok=True)
             shutil.move(src=str(source_file), dst=str(target_file_path))
-            logger.info(f"Successfully moved {source_file} > {target_file_path}")
+
+            move_end_time = perf_counter()
+
+            move_execution_time = move_end_time - move_start_time
+
+            logger.info(f"Successfully moved {source_file} > {target_file_path} in {move_execution_time:.6f} seconds")
         except PermissionError:
             logger.error("Check output folder permissions")
             sys.exit(1)
 
     else:
-        logger.info(f"Would have moved {source_file} > {target_file_path}")
+        logger.info(f"Would have moved - {source_file} > {target_file_path}")
 
 end_time = perf_counter()
 
 execution_time = end_time - start_time
 
-logger.info(f"Completed processing of {media_count} files in {execution_time:.2f} seconds")
-logger.info(f"The average speed was {media_count/execution_time:.2f} files/sec")
+if run_mode == False:
+    logger.info(f"Completed processing of {media_count} files in {execution_time:.2f} seconds")
+    logger.info(f"The average speed was {media_count/execution_time:.2f} files/sec")
+else:
+    logger.info(f"Completed dry run of {media_count} files in {execution_time:.2f} seconds")

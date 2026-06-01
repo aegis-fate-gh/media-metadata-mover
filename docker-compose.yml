@@ -1,0 +1,17 @@
+---
+version: '3.8'
+
+services:
+  media-metadata-mover:
+    image: aegisfatedh/media-metadata-mover:latest
+    container_name: media-metadata-mover
+    volumes:
+      - '/media/input:/input'
+      - '/media/output:/output'
+    environment:
+      - PUID=1000
+      - PGID=1000
+      # Only uncomment when you're ready for the script to actually move the files
+      # - DRY_RUN=No
+      - INPUT_FOLDER=/media/PATH_HERE
+      - OUTPUT_FOLDER=/media/PATH_HERE
