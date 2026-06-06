@@ -117,5 +117,7 @@ execution_time = end_time - start_time
 if run_mode == "false":
     logger.info(f"Completed processing of {media_count} files in {execution_time:.2f} seconds")
     logger.info(f"The average speed was {media_count/execution_time:.2f} files/sec")
+    sys.exit(0)
 else:
     logger.info(f"Completed dry run of {media_count} files in {execution_time:.2f} seconds")
+    sys.exit(0)
